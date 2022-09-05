@@ -1,0 +1,88 @@
+dimata:
+  service:
+    name : CONT
+  jwt:
+    latest-pk-uri: https://application.account.esemeton.com
+    aud: ${dimata.service.name}
+    iss: http://dimata.com
+    service-key:
+      secret: hominahominahominahomina=
+      version: "1.0"
+      exp: 10|minutes
+
+"%dev":
+  quarkus:
+    log:
+      category:
+        {"com.dimata.service.general.harisma"}:
+          level: DEBUG
+    http:
+      auth:
+        permission:
+          maintainer:
+            enabled: false
+
+"%test":
+  quarkus:
+    http:
+      auth:
+        permission:
+          maintainer:
+            enabled: false
+
+
+quarkus:
+  log:
+    level: INFO
+  rest-client:
+    public-key-client:
+      url: ${dimata.jwt.latest-pk-uri}
+  http:
+    port: 8021
+    auth:
+      policy:
+        protect-policy:
+          roles-allowed: protect
+        admin-policy:
+          roles-allowed: admin
+        maintainer-policy:
+          roles-allowed: maintainer
+      permission:
+        public:
+          paths: /api/v1/public/*
+          policy: permit
+        protect:
+          paths: /api/v1/protect/*
+          policy: authenticated
+        admin:
+          paths: /api/v1/admin/*
+          policy: admin-policy
+        maintainer:
+          paths: /api/v1/maintainer/*
+          policy: maintainer-policy
+        legacy1:
+          paths: /api/v1/protect/address/*
+          policy: permit
+        legacy2:
+          paths: /api/v1/protect/contact-bank/*
+          policy: permit
+        legacy3:
+          paths: /api/v1/protect/contacts/*
+          policy: permit
+        legacy4:
+          paths: /api/v1/protect/legacy-holder/*
+          policy: permit
+  datasource:
+    db-kind: mysql
+    username: root
+    password:
+    jdbc:
+      url: jdbc:mysql://localhost:3306/db_demo_harisma
+  hibernate-orm:
+    database:
+      generation:
+        ~: none
+
+
+
+
